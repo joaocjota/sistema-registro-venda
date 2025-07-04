@@ -9,54 +9,8 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal, Phone, Mail, MessageSquare, Star } from "lucide-react";
+import { useClients } from "@/hooks/useClients";
 
-interface Client {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  status: 'lead' | 'prospect' | 'client' | 'inactive';
-  value: number;
-  lastContact: string;
-  crossSellPotential: boolean;
-  recurrence: boolean;
-}
-
-const mockClients: Client[] = [
-  {
-    id: '1',
-    name: 'João Silva',
-    email: 'joao@exemplo.com',
-    phone: '(11) 99999-9999',
-    status: 'client',
-    value: 15000,
-    lastContact: '2024-03-01',
-    crossSellPotential: true,
-    recurrence: true
-  },
-  {
-    id: '2',
-    name: 'Maria Santos',
-    email: 'maria@exemplo.com',
-    phone: '(11) 88888-8888',
-    status: 'prospect',
-    value: 25000,
-    lastContact: '2024-02-28',
-    crossSellPotential: true,
-    recurrence: false
-  },
-  {
-    id: '3',
-    name: 'Pedro Costa',
-    email: 'pedro@exemplo.com',
-    phone: '(11) 77777-7777',
-    status: 'lead',
-    value: 8000,
-    lastContact: '2024-02-25',
-    crossSellPotential: false,
-    recurrence: true
-  },
-];
 
 const statusColors = {
   lead: 'bg-warning/10 text-warning border-warning/20',
@@ -73,6 +27,23 @@ const statusLabels = {
 };
 
 export function ClientList() {
+  const { clients, loading } = useClients();
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Clientes Recentes</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -83,7 +54,7 @@ export function ClientList() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {mockClients.map((client) => (
+          {clients.slice(0, 5).map((client) => (
             <div key={client.id} className="flex items-center justify-between p-4 border rounded-lg bg-gradient-card">
               <div className="flex items-center space-x-4">
                 <Avatar>
@@ -94,11 +65,11 @@ export function ClientList() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <h4 className="font-semibold text-foreground">{client.name}</h4>
-                    {client.crossSellPotential && (
+                    {client.cross_sell_potential && (
                       <Star className="h-4 w-4 text-warning fill-warning" />
                     )}
                   </div>
-                  <p className="text-sm text-muted-foreground">{client.email}</p>
+                  <p className="text-sm text-muted-foreground">{client.email || 'Email não informado'}</p>
                   <div className="flex items-center gap-2 mt-1">
                     <Badge variant="outline" className={statusColors[client.status]}>
                       {statusLabels[client.status]}
@@ -115,10 +86,10 @@ export function ClientList() {
               <div className="flex items-center space-x-2">
                 <div className="text-right">
                   <p className="font-semibold text-foreground">
-                    R$ {client.value.toLocaleString('pt-BR')}
+                    R$ {Number(client.value || 0).toLocaleString('pt-BR')}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Último contato: {new Date(client.lastContact).toLocaleDateString('pt-BR')}
+                    Último contato: {client.last_contact ? new Date(client.last_contact).toLocaleDateString('pt-BR') : 'Não informado'}
                   </p>
                 </div>
                 
@@ -151,7 +122,13 @@ export function ClientList() {
                 </DropdownMenu>
               </div>
             </div>
-          ))}
+           ))}
+          
+          {clients.length === 0 && (
+            <div className="text-center py-8 text-muted-foreground">
+              Nenhum cliente cadastrado
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

@@ -4,6 +4,7 @@ import { MetricCard } from "@/components/dashboard/MetricCard";
 import { ClientList } from "@/components/sales/ClientList";
 import { TaskList } from "@/components/tasks/TaskList";
 import { SalesChart } from "@/components/sales/SalesChart";
+import { useMetrics } from "@/hooks/useMetrics";
 import { 
   DollarSign, 
   Users, 
@@ -14,6 +15,8 @@ import {
 } from "lucide-react";
 
 const Index = () => {
+  const metrics = useMetrics();
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -37,30 +40,30 @@ const Index = () => {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <MetricCard
                 title="Vendas do Mês"
-                value="R$ 67.000"
-                change="+12% em relação ao mês anterior"
-                changeType="positive"
+                value={metrics.monthSales.value}
+                change={metrics.monthSales.change}
+                changeType={metrics.monthSales.changeType}
                 icon={DollarSign}
               />
               <MetricCard
                 title="Clientes Ativos"
-                value="142"
-                change="+8 novos clientes"
-                changeType="positive"
+                value={metrics.activeClients.value}
+                change={metrics.activeClients.change}
+                changeType={metrics.activeClients.changeType}
                 icon={Users}
               />
               <MetricCard
                 title="Taxa de Conversão"
-                value="24%"
-                change="+2.5% este mês"
-                changeType="positive"
+                value={metrics.conversionRate.value}
+                change={metrics.conversionRate.change}
+                changeType={metrics.conversionRate.changeType}
                 icon={TrendingUp}
               />
               <MetricCard
                 title="Meta do Mês"
-                value="92%"
-                change="R$ 5.000 para bater meta"
-                changeType="neutral"
+                value={metrics.goalProgress.value}
+                change={metrics.goalProgress.change}
+                changeType={metrics.goalProgress.changeType}
                 icon={Target}
               />
             </div>
@@ -69,23 +72,23 @@ const Index = () => {
             <div className="grid gap-4 md:grid-cols-3">
               <MetricCard
                 title="Tarefas Pendentes"
-                value="8"
-                change="2 com alta prioridade"
-                changeType="negative"
+                value={metrics.pendingTasks.value}
+                change={metrics.pendingTasks.change}
+                changeType={metrics.pendingTasks.changeType}
                 icon={Calendar}
               />
               <MetricCard
                 title="Cross-sell Potencial"
-                value="15"
-                change="R$ 45.000 em oportunidades"
-                changeType="positive"
+                value={metrics.crossSell.value}
+                change={metrics.crossSell.change}
+                changeType={metrics.crossSell.changeType}
                 icon={Star}
               />
               <MetricCard
                 title="Comissão Atual"
-                value="R$ 6.700"
-                change="+15% vs mês anterior"
-                changeType="positive"
+                value={metrics.commission.value}
+                change={metrics.commission.change}
+                changeType={metrics.commission.changeType}
                 icon={DollarSign}
               />
             </div>
